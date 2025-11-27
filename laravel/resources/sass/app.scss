@@ -1,0 +1,15 @@
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+$grid-breakpoints: map-merge(
+  $grid-breakpoints,
+  (
+    wide: 1500px
+  )
+);
+
+@import "bootstrap/scss/bootstrap";
+
+@import "custom";

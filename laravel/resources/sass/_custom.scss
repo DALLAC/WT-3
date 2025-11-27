@@ -1,0 +1,182 @@
+$primary-color: #0077be;
+$header-bg-color: aliceblue;
+$border-color: black;
+$white: white;
+$label-bg: #90e0ef;
+$footer-border: #e0e0e0;
+$text-color: #333;
+
+.navbar-custom {
+  background-color: $header-bg-color;
+  border: 1px solid $border-color;
+  height: 40px;
+}
+
+.container-custom {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.modal-img-custom {
+  max-height: 150px;
+}
+
+.hlabel {
+  background-color: $primary-color;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  font-size: 30px;
+  padding: 0 8px;
+  color: $white;
+  line-height: 1;
+
+  height: 90%; 
+}
+
+.hname {
+  display: flex;
+  align-items: center;
+  height: 100%; 
+  padding-left: 10px; 
+  
+  h3 {
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: $text-color;
+  }
+}
+
+.hbutton {
+  padding-right: 15px;
+  
+  button {
+    padding: 5px 10px;
+    background-color: $primary-color;
+    border: none;
+    color: $white;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+}
+
+.container {
+  margin: auto;
+  max-width: 1000px;
+}
+
+.card {
+  display: flex;
+  border-radius: 10px;
+
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.labelImg {
+  position: relative;
+}
+
+.label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: $label-bg;
+  border: 1px solid;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+$gradient-steps: 5;
+$base-color: #0077be;
+
+@mixin card-background($color) {
+  background-color: $color;
+  border-color: darken($color, 10%);
+}
+
+@for $i from 1 through $gradient-steps {
+  .row > .mb-4:nth-child(#{$gradient-steps}n + #{$i}) .card {
+    @include card-background(lighten($base-color, ($i - 1) * 15%));
+  }
+}
+
+footer {
+  border-top: 2px solid $footer-border;
+  padding: 30px 20px;
+  margin-top: auto;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+}
+
+.fcontent {
+  height: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+}
+
+.fname {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.freferences {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.round-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.btnIco {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.3); 
+  padding-top: 10px;
+
+  .btn-action {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    color: #333; 
+    font-weight: bold;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    &.delete-btn {
+      color: #dc3545;
+    }
+    
+    &.edit-btn {
+      color: #0d6efd; 
+    }
+  }
+}
