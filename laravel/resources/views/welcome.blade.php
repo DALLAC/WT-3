@@ -30,7 +30,6 @@
     
             <div class="col mb-4">
                 <div class="card h-100">
-                    <a href="{{ route('studios.show', $studio->id) }}" class="text-decoration-none text-dark h-100 d-block">
                         <div class="pointer-event h-100" data-index="{{ $index }}">
                             
                             <div class="labelImg">
@@ -46,7 +45,6 @@
                             </div>
                             
                         </div>      
-                    </a>
 
                     <div class="card-footer bg-transparent d-flex justify-content-between">
                         <a href="{{ route('studios.edit', $studio->id) }}" class="btn btn-sm btn-action edit-btn">
