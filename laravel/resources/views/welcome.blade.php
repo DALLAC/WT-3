@@ -104,6 +104,7 @@
     <footer>
         <div class="fcontent">
             <div class="fname">
+                Клёнов Никита Сергееивч
             </div>
             <div class="freferences">
                 <a href="https://ya.ru/" class="round-btn">

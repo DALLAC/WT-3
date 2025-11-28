@@ -63,8 +63,10 @@
                     <input type="file" name="image" class="form-control">
                     @if($studio->exists && $studio->image)
                         <div class="mt-2">
-                            <img src="{{ Str::startsWith($studio->image, '/') ? $studio->image : asset('storage/' . $studio->image) }}" height="60">
-                            <small class="text-muted ms-2">Текущая</small>
+                            <img 
+                                src="{{ Str::startsWith($studio->image, '/') ? $studio->image : asset('storage/' . $studio->image) }}" 
+                                alt="Studio Image">
+                            <div class="text-muted mt-1">Текущая</div>
                         </div>
                     @endif
                 </div>
