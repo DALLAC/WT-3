@@ -22,4 +22,11 @@ class Studio extends Model
     protected $casts = [
         'founded_at' => 'date', 
     ];
+
+    protected function title(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => ucfirst($value),
+        );
+    }
 }
