@@ -39,6 +39,17 @@ class Studio extends Model
     #    get: fn ($value) => Carbon::parse($value),
     #);
     #}
+    protected static function booted(): void
+    {
+        static::creating(function (Studio $studio) {
+            if (!auth()->check()) {
+                throw new AuthorizationException('Неавторизованный доступ');
+            }
+
+            $post->user_id = auth()->id();
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
