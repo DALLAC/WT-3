@@ -18,7 +18,28 @@
         
             <div class="hbutton">
                 <button type="button" class="btn btn-primary" id="downloadButton">Загрузить</button>
-                 <a href="{{ route('studios.create') }}" class="btn btn-success btn-sm">Добавить</a>
+
+                @guest
+                    <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Войти</a>
+                    <a href="{{ route('register') }}" class="btn btn-success ms-2">Регистрация</a>
+                @endguest
+
+                @auth
+                    <span class="text-white ms-2">
+                        {{ auth()->user()->name ?? auth()->user()->username }}
+                    </span>
+
+                    <a href="{{ route('studios.create') }}" class="btn btn-success btn-sm ms-2">
+                        Добавить
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline ms-2">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            Выйти
+                        </button>
+                    </form>
+                @endauth
             </div>
         </div>
     </nav>
@@ -47,19 +68,24 @@
                         </div>      
 
                     <div class="card-footer bg-transparent d-flex justify-content-between">
-                        <a href="{{ route('studios.edit', $studio->id) }}" class="btn btn-sm btn-action edit-btn">
-                            Ред.
-                        </a>
-
+                        {{-- Кнопка "Инфо" можно показывать всем, если не хочешь ограничивать просмотр --}}
                         <a href="{{ route('studios.show', $studio->id) }}" class="btn btn-sm btn-action" title="Открыть отдельную страницу">
                             Инфо
                         </a>
 
-                        <form action="{{ route('studios.destroy', $studio->id) }}" method="POST" onsubmit="return confirm('Удалить?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-action delete-btn">Удалить</button>
-                        </form>
+                        @can('update-studio', $studio)
+                            <a href="{{ route('studios.edit', $studio->id) }}" class="btn btn-sm btn-action edit-btn">
+                                Ред.
+                            </a>
+                        @endcan
+
+                        @can('delete-studio', $studio)
+                            <form action="{{ route('studios.destroy', $studio->id) }}" method="POST" onsubmit="return confirm('Удалить?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-action delete-btn">Удалить</button>
+                            </form>
+                        @endcan
                     </div>
 
                 </div>

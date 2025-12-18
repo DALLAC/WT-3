@@ -3,43 +3,84 @@
 namespace App\Http\Controllers;
 
 use App\Models\Studio;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class StudioController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Не используется в ресурсных маршрутах (они except['index']),
+     * но можно оставить для главной страницы.
      */
     public function index()
     {
-        $studios = Studio::all();
-        
+        if (Auth::check()) {
+            $studios = Studio::where('user_id', Auth::id())->get();
+        } else {
+            $studios = collect();
+        }
+
         return view('welcome', compact('studios'));
     }
 
+
     /**
-     * Show the form for creating a new resource.
+     * Список студий конкретного пользователя по username.
+     * /users/{user}/studios
+     * {user} → User через Route Model Binding (getRouteKeyName() = 'username')
+     */
+    public function indexByUser(User $user)
+    {
+        $query = $user->studios();
+
+        if (Auth::user()->is_admin) {
+            // админ видит и удалённые
+            $studios = $query->withTrashed()->get();
+        } else {
+            // обычный — только активные
+            $studios = $query->get();
+        }
+
+        return view('studios.index', compact('studios', 'user'));
+    }
+
+    /**
+     * Форма создания новой студии.
+     * Создавать может любой авторизованный.
      */
     public function create()
     {
+        Gate::authorize('create-studio');
+
         return view('studios.form', ['studio' => new Studio()]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Сохранение новой студии.
+     * user_id проставится в модели Studio::booted()
      */
     public function store(Request $request)
     {
+        Gate::authorize('create-studio');
+
         $request->validate([
-            'title' => 'required|string|max:255',
-            'location' => 'nullable|string|max:100',
+            'title'             => 'required|string|max:255',
+            'location'          => 'nullable|string|max:100',
             'short_description' => 'nullable|string|max:500',
-            'description' => 'required|string',
-            'founded_at' => 'nullable|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description'       => 'required|string',
+            'founded_at'        => 'nullable|date',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only([
+            'title',
+            'location',
+            'short_description',
+            'description',
+            'founded_at',
+        ]);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads', 'public');
@@ -48,11 +89,15 @@ class StudioController extends Controller
 
         Studio::create($data);
 
-        return redirect('/')->with('success', 'Студия успешно добавлена!');
+        // после создания — на список студий текущего пользователя
+        return redirect()
+            ->route('users.studios.index', Auth::user())
+            ->with('success', 'Студия успешно добавлена!');
     }
 
     /**
-     * Display the specified resource.
+     * Показ одной студии (если используешь).
+     * Здесь можно не ставить Gate, по заданию не обязательно.
      */
     public function show(Studio $studio)
     {
@@ -60,27 +105,39 @@ class StudioController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Форма редактирования студии.
+     * Редактировать может только владелец или админ.
      */
     public function edit(Studio $studio)
     {
+        Gate::authorize('update-studio', $studio);
+
         return view('studios.form', ['studio' => $studio]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновление студии.
      */
     public function update(Request $request, Studio $studio)
     {
-         $request->validate([
-            'title' => 'required|string|max:255',
-            'location' => 'nullable|string|max:100',
+        Gate::authorize('update-studio', $studio);
+
+        $request->validate([
+            'title'             => 'required|string|max:255',
+            'location'          => 'nullable|string|max:100',
             'short_description' => 'nullable|string|max:500',
-            'description' => 'required|string',
-            'image' => 'nullable|image|max:2048',
+            'description'       => 'required|string',
+            'founded_at'        => 'nullable|date',
+            'image'             => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only([
+            'title',
+            'location',
+            'short_description',
+            'description',
+            'founded_at',
+        ]);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads', 'public');
@@ -89,29 +146,52 @@ class StudioController extends Controller
 
         $studio->update($data);
 
-        return redirect('/')->with('success', 'Студия обновлена!');
+        return redirect()
+            ->route('users.studios.index', $studio->user)
+            ->with('success', 'Студия обновлена!');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Мягкое удаление (Soft Delete).
+     * Обычный пользователь может удалять только свои,
+     * админ — любые.
      */
     public function destroy(Studio $studio)
     {
+        Gate::authorize('delete-studio', $studio);
+
         $studio->delete();
-        return redirect('/')->with('success', 'Студия удалена.');
+
+        return back()->with('success', 'Студия удалена (мягкое удаление).');
     }
 
-    public function indexByUser($username)
+    /**
+     * Восстановление мягко удалённой студии.
+     * Доступно только администратору (Gate: restore-studio).
+     */
+    public function restore($id)
     {
-        $query = $user->posts();
+        $studio = Studio::withTrashed()->findOrFail($id);
 
-        if (Auth::user()->is_admin)
-        {
-            $studio = $query->withTrashed()->get();
-        } else {
-            $studios = $query->get();
-        }
+        Gate::authorize('restore-studio', $studio);
 
-        return view('studios.index', compact('studios', 'user'));
+        $studio->restore();
+
+        return back()->with('success', 'Студия восстановлена.');
+    }
+
+    /**
+     * Полное удаление студии (без возможности восстановления).
+     * Только админ.
+     */
+    public function forceDelete($id)
+    {
+        $studio = Studio::withTrashed()->findOrFail($id);
+
+        Gate::authorize('force-delete-studio', $studio);
+
+        $studio->forceDelete();
+
+        return back()->with('success', 'Студия удалена окончательно.');
     }
 }
