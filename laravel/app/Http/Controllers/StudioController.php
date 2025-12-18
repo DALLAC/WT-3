@@ -100,4 +100,18 @@ class StudioController extends Controller
         $studio->delete();
         return redirect('/')->with('success', 'Студия удалена.');
     }
+
+    public function indexByUser($username)
+    {
+        $query = $user->posts();
+
+        if (Auth::user()->is_admin)
+        {
+            $studio = $query->withTrashed()->get();
+        } else {
+            $studios = $query->get();
+        }
+
+        return view('studios.index', compact('studios', 'user'));
+    }
 }

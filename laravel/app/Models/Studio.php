@@ -39,4 +39,8 @@ class Studio extends Model
     #    get: fn ($value) => Carbon::parse($value),
     #);
     #}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

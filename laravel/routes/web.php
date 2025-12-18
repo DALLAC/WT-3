@@ -1,20 +1,24 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StudioController; 
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\StudioController;
 
-Route::get('/', [StudioController::class, 'index']);
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::resource('studios', StudioController::class);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-#Route::get('/', [StudioController::class, 'index'])->name('studios.index');
+Route::middleware('auth')->group(function () {
+    Route::get('/users', [UserController::class, 'index'])->name('user.index');
+    Route::get('/users/{user}/studios', [StudioController::class, 'indexByUser'])->name('users.post.index');
+    Route::resource('studios', StudioController::class)->except(['index', 'show']);
+    Route::get('/studios/{studio}/restore', [StudioController::class, 'restore'])->name('post.restore');
+    Route::delete('/studios/{studio}/force-delete', [StudioController::class, 'forceDelete'])->name('post.force-delete');
+});
 
-#Route::get('/studios/create', [StudioController::class, 'create'])->name('studios.create');
-#Route::post('/studios', [StudioController::class, 'store'])->name('studios.store');
-
-#Route::get('/studios/{studio}', [StudioController::class, 'show'])->name('studios.show');
-
-#Route::get('/studios/{studio}/edit', [StudioController::class, 'edit'])->name('studios.edit');
-#Route::put('/studios/{studio}', [StudioController::class, 'update'])->name('studios.update');
-
-#Route::delete('/studios/{studio}', [StudioController::class, 'destroy'])->name('studios.destroy');
+require __DIR__.'/auth.php';
