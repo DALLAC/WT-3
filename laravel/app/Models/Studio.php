@@ -16,6 +16,7 @@ class Studio extends Model
     protected $fillable = [
         'title',
         'location',
+        'user_id',
         'short_description', 
         'description',
         'image',
@@ -28,6 +29,7 @@ class Studio extends Model
 
     protected function title(): Attribute
     {
+
         return Attribute::make(
             set: fn (string $value) => ucfirst($value),
         );

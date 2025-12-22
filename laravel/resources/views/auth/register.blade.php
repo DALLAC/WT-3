@@ -1,63 +1,103 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <div class="auth-form">
+        <h1 class="auth-form-title">Регистрация</h1>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" value="Имя" />
-            <x-text-input id="name" class="block mt-1 w-full"
-                          type="text" name="name" :value="old('name')"
-                          required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
 
-        <!-- Username -->
-        <div class="mt-4">
-            <x-input-label for="username" value="Логин" />
-            <x-text-input id="username" class="block mt-1 w-full"
-                          type="text" name="username" :value="old('username')"
-                          required autocomplete="username" />
-            <x-input-error :messages="$errors->get('username')" class="mt-2" />
-        </div>
+            {{-- Имя --}}
+            <div class="mb-3">
+                <label for="name" class="form-label">Имя</label>
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    value="{{ old('name') }}"
+                    required
+                    autofocus
+                    autocomplete="name"
+                >
+                @error('name')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" value="Email" />
-            <x-text-input id="email" class="block mt-1 w-full"
-                          type="email" name="email" :value="old('email')"
-                          required autocomplete="email" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+            {{-- Логин --}}
+            <div class="mb-3">
+                <label for="username" class="form-label">Логин</label>
+                <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    class="form-control"
+                    value="{{ old('username') }}"
+                    required
+                    autocomplete="username"
+                >
+                @error('username')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" value="Пароль" />
-            <x-text-input id="password" class="block mt-1 w-full"
-                          type="password"
-                          name="password"
-                          required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            {{-- Email --}}
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ old('email') }}"
+                    required
+                    autocomplete="email"
+                >
+                @error('email')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" value="Подтверждение пароля" />
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation"
-                          required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            {{-- Пароль --}}
+            <div class="mb-3">
+                <label for="password" class="form-label">Пароль</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    required
+                    autocomplete="new-password"
+                >
+                @error('password')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <a class="text-sm text-muted text-decoration-underline"
-               href="{{ route('login') }}">
-                Уже зарегистрированы?
-            </a>
+            {{-- Подтверждение пароля --}}
+            <div class="mb-3">
+                <label for="password_confirmation" class="form-label">Подтверждение пароля</label>
+                <input
+                    id="password_confirmation"
+                    type="password"
+                    name="password_confirmation"
+                    class="form-control"
+                    required
+                    autocomplete="new-password"
+                >
+                @error('password_confirmation')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-            <x-primary-button class="ms-4">
-                Зарегистрироваться
-            </x-primary-button>
-        </div>
-    </form>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="{{ route('login') }}" class="text-sm text-muted text-decoration-underline">
+                    Уже зарегистрированы?
+                </a>
+
+                <button type="submit" class="btn-auth">
+                    Зарегистрироваться
+                </button>
+            </div>
+        </form>
+    </div>
 </x-guest-layout>

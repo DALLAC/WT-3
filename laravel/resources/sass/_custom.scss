@@ -178,14 +178,18 @@ footer {
     &.edit-btn {
       color: #0d6efd; 
     }
+    
+    &.delete-btn {
+      color: #dc3545;
+    }
+
+    &.edit-btn {
+      color: #0d6efd;
+    }
+
+    &.restore-btn {
+      color: #198754; // зелёный
+    }
   }
 }
 
-.mt-2 {
-  width: 400px; 
-  height: 400px; 
-  display: block;
-  object-fit: 
-  cover; 
-  border-radius: 5px;
-}

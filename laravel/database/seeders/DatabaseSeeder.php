@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use App\Models\Studio;
 
@@ -9,10 +9,36 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+            // Админ
+        $admin = User::create([
+            'name' => 'Admin',
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => 'password',   // захешируется автоматически (cast 'password' => 'hashed')
+            'is_admin' => true,
+        ]);
+
+        // Обычный пользователь 1
+        $user1 = User::create([
+            'name' => 'User One',
+            'username' => 'user1',
+            'email' => 'user1@example.com',
+            'password' => 'password',
+            // is_admin по умолчанию false
+        ]);
+
+        // Обычный пользователь 2
+        $user2 = User::create([
+            'name' => 'User Two',
+            'username' => 'user2',
+            'email' => 'user2@example.com',
+            'password' => 'password',
+        ]);
         $studios = [
             [
                 'title' => 'Rockstar Toronto',
                 'location' => 'Канада',
+                'user_id' => $user1->id,
                 'image' => '/img/Rockstar_Toronto.png',
                 'founded_at' => '1999-01-01',
                 'short_description' => 'Наиболее известна разработкой игры The Warriors и портированием GTA на PC.',
@@ -23,6 +49,7 @@ HTML,
             [
                 'title' => 'Rockstar New England',
                 'location' => 'New England',
+                'user_id' => $user2->id,
                 'image' => '/img/Rockstar_New_England.png',
                 'founded_at' => '2008-04-04',
                 'short_description' => 'Прежде известная как Mad Doc Software. Ответственна за Bully: Scholarship Edition.',
@@ -33,6 +60,7 @@ HTML,
             [
                 'title' => 'Rockstar Lincoln',
                 'location' => 'Lincoln',
+                'user_id' => $user1->id,
                 'image' => '/img/Rockstar_Lincoln.png',
                 'founded_at' => '1997-01-01',
                 'short_description' => 'Студия по локализации, ранее именовавшаяся Tarantula Studios.',
@@ -43,6 +71,7 @@ HTML,
             [
                 'title' => 'Rockstar North',
                 'location' => 'North',
+                'user_id' => $user2->id,
                 'image' => '/img/Rockstar_North.png',
                 'founded_at' => '2002-01-01',
                 'short_description' => 'Флагманская студия. Известна по серии игр Grand Theft Auto и Manhunt.',
@@ -53,6 +82,7 @@ HTML,
             [
                 'title' => 'Rockstar San Diego',
                 'location' => 'San Diego',
+                'user_id' => $admin->id,
                 'image' => '/img/Rockstar_San_Diego.png',
                 'founded_at' => '2002-01-01',
                 'short_description' => "Создатели движка RAGE и серии Midnight Club.",

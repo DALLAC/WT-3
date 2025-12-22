@@ -33,19 +33,24 @@ class StudioController extends Controller
      */
     public function indexByUser(User $user)
     {
-        $query = $user->studios();
+        $viewer = Auth::user();
 
-        if (Auth::user()->is_admin) {
-            // админ видит и удалённые
-            $studios = $query->withTrashed()->get();
-        } else {
-            // обычный — только активные
-            $studios = $query->get();
+        $query = $user->studios()->orderByDesc('created_at');
+
+        if ($viewer && $viewer->is_admin) {
+            $query->withTrashed();
         }
+
+        $studios = $query->get();
 
         return view('studios.index', compact('studios', 'user'));
     }
 
+    public function indexById(int $id)
+    {
+        $user = User::findOrFail($id);
+        return $this->indexByUser($user);
+    }
     /**
      * Форма создания новой студии.
      * Создавать может любой авторизованный.
@@ -91,7 +96,7 @@ class StudioController extends Controller
 
         // после создания — на список студий текущего пользователя
         return redirect()
-            ->route('users.studios.index', Auth::user())
+            ->route('users.studios.byUsername', Auth::user())
             ->with('success', 'Студия успешно добавлена!');
     }
 
