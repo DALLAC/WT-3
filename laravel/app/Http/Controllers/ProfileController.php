@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+
 class ProfileController extends Controller
 {
     /**
@@ -56,5 +57,13 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+    public function token(Request $request): RedirectResponse
+    {
+        $tokenName = 'postman';
+
+        $token = $request->user()->createToken($tokenName)->accessToken;
+
+        return back()->with('api_token', $token);
     }
 }

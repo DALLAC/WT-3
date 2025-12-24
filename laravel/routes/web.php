@@ -6,6 +6,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StudioCommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Api\StudioApiController;
+use App\Http\Controllers\Api\StudioCommentApiController;
 
 Route::get('/', [StudioController::class, 'index'])->name('home');
 
@@ -13,7 +16,27 @@ Route::get('/dashboard', function () {
     return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/studios/{studio}/comments', [StudioCommentApiController::class, 'index']);
+Route::post('/studios/{studio}/comments', [StudioCommentApiController::class, 'store']);
+Route::put('/comments/{comment}', [StudioCommentApiController::class, 'update']);
+
+Route::middleware('auth:api')->get('/studios', [StudioApiController::class, 'index']);
+
+
 Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/studios', [StudioApiController::class, 'index']);
+    Route::get('/studios/{studio}', [StudioApiController::class, 'show']);
+    Route::post('/studios', [StudioApiController::class, 'store']);
+    Route::put('/studios/{studio}', [StudioApiController::class, 'update']);
+
+    Route::middleware('auth')->post('/profile/token', [ProfileController::class, 'token'])
+    ->name('profile.token');
+    
     Route::middleware('auth')->get('/feed', [FeedController::class, 'index'])->name('feed');
     
     Route::post('/users/{user:id}/friends', [FriendController::class, 'store'])
@@ -52,5 +75,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/studios/{studio}/force-delete', [StudioController::class, 'forceDelete'])
         ->name('studios.force-delete');
 });
+
 
 require __DIR__.'/auth.php';

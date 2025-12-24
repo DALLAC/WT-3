@@ -29,9 +29,10 @@
                 @endguest
 
                 @auth
-                    <span class="ms-2 nav-username">
-                        {{ auth()->user()->name ?? auth()->user()->username }}
-                    </span>
+                    <a href="{{ route('profile.edit') }}"
+                    class="ms-2 nav-username text-decoration-none text-white">
+                        {{ auth()->user()->username ?? auth()->user()->name }}
+                    </a>
 
                     <a href="{{ route('users.index') }}" class="btn btn-primary ms-2">
                         Пользователи
