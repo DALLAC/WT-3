@@ -106,7 +106,13 @@ class StudioController extends Controller
      */
     public function show(Studio $studio)
     {
-        return view('studios.show', compact('studio'));
+        $studio->load(['user', 'comments.user']);
+
+        $friendIds = auth()->check()
+            ? auth()->user()->friends()->pluck('users.id')->all()
+            : [];
+
+        return view('studios.show', compact('studio', 'friendIds'));
     }
 
     /**

@@ -19,7 +19,6 @@
             <div class="hbutton">
                 <button type="button" class="btn btn-primary" id="downloadButton">Загрузить</button>
                 @guest
-                    {{-- обычная синяя кнопка, как "Загрузить" --}}
                     <a href="{{ route('login') }}" class="btn btn-primary btn-sm ms-2">
                         Войти
                     </a>
@@ -30,13 +29,16 @@
                 @endguest
 
                 @auth
-                    {{-- убираем text-white, даём свой класс --}}
                     <span class="ms-2 nav-username">
                         {{ auth()->user()->name ?? auth()->user()->username }}
                     </span>
-                    
+
                     <a href="{{ route('users.index') }}" class="btn btn-primary ms-2">
                         Пользователи
+                    </a>
+
+                    <a href="{{ route('feed') }}" class="btn btn-warning ms-2">
+                        Лента
                     </a>
 
                     <a href="{{ route('studios.create') }}" class="btn btn-success btn-sm ms-2">

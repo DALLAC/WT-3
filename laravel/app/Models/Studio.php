@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\StudioComment;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 #use Carbon\Carbon;
 
 class Studio extends Model
@@ -45,7 +47,6 @@ class Studio extends Model
     protected static function booted(): void
     {
         static::creating(function (Studio $studio) {
-            // Не мешаем консоли/сидерам
             if (app()->runningInConsole()) {
                 return;
             }
@@ -54,7 +55,6 @@ class Studio extends Model
                 throw new AuthorizationException('Неавторизованный доступ');
             }
 
-            // Если из формы не пришёл user_id — ставим текущего пользователя
             if (!$studio->user_id) {
                 $studio->user_id = auth()->id();
             }
@@ -65,4 +65,9 @@ class Studio extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(StudioComment::class);
+    }   
 }

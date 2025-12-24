@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -55,5 +56,10 @@ protected function casts(): array
     public function getRouteKeyName(): string
     {
         return 'username';
+    }
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'friends_users', 'user_id', 'friend_id')
+            ->withTimestamps();
     }
 }

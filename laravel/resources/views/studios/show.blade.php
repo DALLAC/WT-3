@@ -57,7 +57,48 @@
             </div>
         </div>
     </div>
+    <h2 class="text-xl font-semibold mt-8">Комментарии</h2>
+
+    <div class="mt-4 space-y-3">
+        @foreach($studio->comments->sortByDesc('created_at') as $comment)
+            @php
+                $isFriendComment = auth()->check() && in_array($comment->user_id, $friendIds ?? [], true);
+            @endphp
+
+            <div style="padding:10px; border:1px solid #ccc; margin:8px 0; background: {{ $isFriendComment ? '#fff7cc' : '#ffffff' }};">
+                <div style="font-size: 12px; color:#666;">
+                    {{ $comment->user->username ?? $comment->user->name }}
+                    @if($isFriendComment)
+                        <strong>(друг)</strong>
+                    @endif
+                    — {{ $comment->created_at->format('d.m.Y H:i') }}
+                </div>
+
+                <div style="margin-top:6px; white-space: pre-wrap;">{{ $comment->text }}</div>
+            </div>
+        @endforeach
+    </div>
+
+    @auth
+        <form method="POST" action="{{ route('studios.comments.store', $studio) }}" class="mt-6">
+            @csrf
+
+            <label class="block font-medium">Добавить комментарий</label>
+            <textarea name="text" class="w-full border rounded p-2 mt-2" rows="4" required>{{ old('text') }}</textarea>
+
+            @error('text')
+                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+            @enderror
+
+            <button type="submit" class="mt-2 px-4 py-2 rounded bg-black text-white">
+                Отправить
+            </button>
+        </form>
+    @else
+        <div class="mt-6 text-gray-600">Войдите, чтобы оставить комментарий.</div>
+    @endauth
 </div>
+
 
 </body>
 </html>

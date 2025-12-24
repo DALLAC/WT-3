@@ -3,17 +3,27 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudioController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StudioCommentController;
+use App\Http\Controllers\FriendController;
+use App\Http\Controllers\FeedController;
 
-// Главная — список студий (у тебя в StudioController@index логика по ролям)
 Route::get('/', [StudioController::class, 'index'])->name('home');
 
-// dashboard Breeze — просто редиректим на главную
 Route::get('/dashboard', function () {
     return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Всё, что ниже — только для авторизованных
 Route::middleware('auth')->group(function () {
+    Route::middleware('auth')->get('/feed', [FeedController::class, 'index'])->name('feed');
+    
+    Route::post('/users/{user:id}/friends', [FriendController::class, 'store'])
+        ->name('users.friends.store');
+
+    Route::delete('/users/{user:id}/friends', [FriendController::class, 'destroy'])
+        ->name('users.friends.destroy');
+    
+    Route::post('/studios/{studio}/comments', [StudioCommentController::class, 'store'])
+        ->name('studios.comments.store');
 
     // Список всех пользователей (навигация по ним)
     Route::get('/users', [UserController::class, 'index'])
@@ -43,5 +53,4 @@ Route::middleware('auth')->group(function () {
         ->name('studios.force-delete');
 });
 
-// Маршруты аутентификации Breeze (login/register и т.д.)
 require __DIR__.'/auth.php';
