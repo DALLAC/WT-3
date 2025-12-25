@@ -25,6 +25,8 @@ Route::middleware('auth:api')->get('/studios', [StudioApiController::class, 'ind
 
 Route::middleware('auth')->group(function () {
 
+    Route::resource('studios', StudioController::class)->except(['index']);
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
